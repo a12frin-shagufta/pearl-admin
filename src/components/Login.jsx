@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { backendUrl } from '../App';
-import { FiLoader } from 'react-icons/fi';
+import { FiLoader, FiEye, FiEyeOff } from 'react-icons/fi';
 
 const Login = ({ setToken }) => {
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -30,6 +31,10 @@ const Login = ({ setToken }) => {
     }
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-amber-50 px-4">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
@@ -48,17 +53,26 @@ const Login = ({ setToken }) => {
               disabled={isLoading}
             />
           </div>
-          <div>
+          
+          <div className="relative">
             <label className="block mb-1 text-sm font-medium text-amber-700">Password</label>
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               name="password"
               required
               value={form.password}
               onChange={handleChange}
-              className="w-full border border-amber-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="w-full border border-amber-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 pr-10"
               disabled={isLoading}
             />
+            <button
+              type="button"
+              onClick={togglePasswordVisibility}
+              className="absolute right-3 bottom-2.5 text-amber-600 hover:text-amber-800 focus:outline-none"
+              disabled={isLoading}
+            >
+              {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
+            </button>
           </div>
           
           {error && (
