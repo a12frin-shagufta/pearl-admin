@@ -44,10 +44,12 @@ const List = ({ token }) => {
   }, []);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4">
       <h2 className="text-2xl font-semibold text-gray-700">Product List</h2>
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white shadow rounded">
+      
+      {/* Desktop Table */}
+      <div className="hidden md:block overflow-x-auto">
+        <table className="min-w-full bg-white shadow rounded-lg">
           <thead className="bg-gray-100 text-gray-600 text-sm">
             <tr>
               <th className="p-4 text-left">Image</th>
@@ -62,7 +64,11 @@ const List = ({ token }) => {
             {products.map((item) => (
               <tr key={item._id} className="border-b hover:bg-gray-50">
                 <td className="p-4">
-                  <img src={Array.isArray(item.image) ? item.image[0] : item.image} alt={item.name} className="w-16 h-16 object-cover rounded" />
+                  <img 
+                    src={Array.isArray(item.image) ? item.image[0] : item.image} 
+                    alt={item.name} 
+                    className="w-16 h-16 object-cover rounded" 
+                  />
                 </td>
                 <td className="p-4">{item.name}</td>
                 <td className="p-4">{item.category}</td>
@@ -87,6 +93,43 @@ const List = ({ token }) => {
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile Cards */}
+      <div className="md:hidden space-y-4">
+        {products.length === 0 ? (
+          <div className="p-6 text-center text-gray-500">
+            No products found.
+          </div>
+        ) : (
+          products.map((item) => (
+            <div key={item._id} className="bg-white p-4 rounded-lg shadow">
+              <div className="flex items-start space-x-4">
+                <img 
+                  src={Array.isArray(item.image) ? item.image[0] : item.image} 
+                  alt={item.name} 
+                  className="w-20 h-20 object-cover rounded" 
+                />
+                <div className="flex-1">
+                  <h3 className="font-medium text-gray-800">{item.name}</h3>
+                  <p className="text-sm text-gray-600">{item.category}</p>
+                  <div className="mt-2 flex justify-between items-center">
+                    <div>
+                      <p className="text-gray-700">{currency} {item.price}</p>
+                      <p className="text-sm text-gray-500">Stock: {item.stock}</p>
+                    </div>
+                    <button
+                      onClick={() => deleteProduct(item._id)}
+                      className="text-red-600 hover:text-red-800 font-medium text-sm"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

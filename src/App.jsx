@@ -1,33 +1,46 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import Add from './pages/Add';
 import List from './pages/List';
 import Order from './pages/Order';
 import Offer from './pages/Offer';
-import { useState, useEffect } from 'react';
 import Login from './components/Login';
-
 
 export const backendUrl = import.meta.env.VITE_BACKEND_URL;
 export const currency = '₹';
 
 const App = () => {
-  const [token, setToken] = useState(localStorage.getItem('token') ? localStorage.getItem('token') : '');
+  const [token, setToken] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
-    localStorage.setItem('token', token);
+    const savedToken = localStorage.getItem('token');
+    if (savedToken) {
+      setToken(savedToken); // automatically login if token exists
+    }
+  }, []);
+
+  useEffect(() => {
+    if (token) {
+      localStorage.setItem('token', token);
+    }
   }, [token]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setToken('');
+    navigate('/'); // optional: redirect to login
+  };
 
   return (
     <div className="bg-gray-50 min-h-screen">
-     
       {token === '' ? (
         <Login setToken={setToken} />
       ) : (
         <>
-          <Navbar setToken={setToken} />
+          <Navbar setToken={handleLogout} />
           <hr className="border-gray-200" />
           <div className="flex">
             <Sidebar />
