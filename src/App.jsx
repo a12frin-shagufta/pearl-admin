@@ -4,7 +4,7 @@ import Sidebar from './components/Sidebar';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import Add from './pages/Add';
 import List from './pages/List';
-import Order from './pages/Order';
+
 import Offer from './pages/Offer';
 import Login from './components/Login';
 import { ToastContainer, toast } from 'react-toastify';
@@ -53,7 +53,7 @@ const App = () => {
               <Routes>
                 <Route path="/add" element={<Add token={token} />} />
                 <Route path="/list" element={<List token={token} />} />
-                <Route path="/order" element={<Order token={token} />} />
+              
                 <Route path="/offer" element={<Offer token={token} />} />
               </Routes>
             </div>

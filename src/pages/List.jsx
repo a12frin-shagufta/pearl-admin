@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { backendUrl, currency } from '../App';
-import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { backendUrl, currency } from "../App";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const List = ({ token }) => {
   const [products, setProducts] = useState([]);
@@ -23,13 +23,18 @@ const List = ({ token }) => {
   };
 
   const deleteProduct = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this product?")) return;
+    if (!window.confirm("Are you sure you want to delete this product?"))
+      return;
     try {
-      const res = await axios.post(`${backendUrl}/api/product/remove`, { id }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await axios.post(
+        `${backendUrl}/api/product/remove`,
+        { id },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       if (res.data.success) {
         toast.success("Product removed");
         fetchProducts();
@@ -47,7 +52,7 @@ const List = ({ token }) => {
   return (
     <div className="space-y-6 p-4">
       <h2 className="text-2xl font-semibold text-gray-700">Product List</h2>
-      
+
       {/* Desktop Table */}
       <div className="hidden md:block overflow-x-auto">
         <table className="min-w-full bg-white shadow rounded-lg">
@@ -65,15 +70,19 @@ const List = ({ token }) => {
             {products.map((item) => (
               <tr key={item._id} className="border-b hover:bg-gray-50">
                 <td className="p-4">
-                  <img 
-                    src={Array.isArray(item.image) && item.image.length > 0 ? item.image[0] : '/fallback-image.jpg'} 
-                    alt={item.name} 
-                    className="w-16 h-16 object-cover rounded" 
+                  <img
+                    src={
+                      item.variants?.[0]?.images?.[0] || "/fallback-image.jpg"
+                    }
+                    alt={item.name}
+                    className="w-16 h-16 object-cover rounded"
                   />
                 </td>
                 <td className="p-4">{item.name}</td>
                 <td className="p-4">{item.category}</td>
-                <td className="p-4">{currency} {item.price}</td>
+                <td className="p-4">
+                  {currency} {item.price}
+                </td>
                 <td className="p-4">{item.stock}</td>
                 <td className="p-4">
                   <button
@@ -106,18 +115,23 @@ const List = ({ token }) => {
           products.map((item) => (
             <div key={item._id} className="bg-white p-4 rounded-lg shadow">
               <div className="flex items-start space-x-4">
-                <img 
-                  src={Array.isArray(item.image) && item.image.length > 0 ? item.image[0] : '/fallback-image.jpg'} 
-                  alt={item.name} 
-                  className="w-20 h-20 object-cover rounded" 
+                <img
+                  src={item.variants?.[0]?.images?.[0] || "/fallback-image.jpg"}
+                  alt={item.name}
+                  className="w-20 h-20 object-cover rounded"
                 />
+
                 <div className="flex-1">
                   <h3 className="font-medium text-gray-800">{item.name}</h3>
                   <p className="text-sm text-gray-600">{item.category}</p>
                   <div className="mt-2 flex justify-between items-center">
                     <div>
-                      <p className="text-gray-700">{currency} {item.price}</p>
-                      <p className="text-sm text-gray-500">Stock: {item.stock}</p>
+                      <p className="text-gray-700">
+                        {currency} {item.price}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        Stock: {item.stock}
+                      </p>
                     </div>
                     <div className="flex space-x-2">
                       <button
