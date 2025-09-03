@@ -2,11 +2,14 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { backendUrl, currency } from "../App";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { useNavigate , useParams } from "react-router-dom";
 
 const List = ({ token }) => {
+  const { id } = useParams();
+
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
+  
 
   const fetchProducts = async () => {
     try {
@@ -85,13 +88,23 @@ const List = ({ token }) => {
                 </td>
                 <td className="p-4">{item.stock}</td>
                 <td className="p-4">
-                  <button
-                    onClick={() => deleteProduct(item._id)}
-                    className="text-red-600 hover:text-red-800 font-medium"
-                  >
-                    Delete
-                  </button>
-                </td>
+  <div className="flex space-x-3">
+    <button
+  onClick={() => navigate(`/edit/${item._id}`)}
+  className="text-blue-600 hover:text-blue-800 font-medium"
+>
+  Edit
+</button>
+
+    <button
+      onClick={() => deleteProduct(item._id)}
+      className="text-red-600 hover:text-red-800 font-medium"
+    >
+      Delete
+    </button>
+  </div>
+</td>
+
               </tr>
             ))}
             {products.length === 0 && (
@@ -134,13 +147,20 @@ const List = ({ token }) => {
                       </p>
                     </div>
                     <div className="flex space-x-2">
-                      <button
-                        onClick={() => deleteProduct(item._id)}
-                        className="text-red-600 hover:text-red-800 font-medium text-sm"
-                      >
-                        Delete
-                      </button>
-                    </div>
+  <button
+    onClick={() => navigate(`/edit/${item._id}`)}
+    className="text-blue-600 hover:text-blue-800 font-medium text-sm"
+  >
+    Edit
+  </button>
+  <button
+    onClick={() => deleteProduct(item._id)}
+    className="text-red-600 hover:text-red-800 font-medium text-sm"
+  >
+    Delete
+  </button>
+</div>
+
                   </div>
                 </div>
               </div>

@@ -4,9 +4,10 @@ import Sidebar from './components/Sidebar';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import Add from './pages/Add';
 import List from './pages/List';
-
 import Offer from './pages/Offer';
 import Login from './components/Login';
+import ManageCategories from './pages/ManageCategories';
+import Edit from './pages/Edit';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -55,6 +56,8 @@ const App = () => {
                 <Route path="/list" element={<List token={token} />} />
               
                 <Route path="/offer" element={<Offer token={token} />} />
+                <Route path="/manage-categories" element={<ManageCategories token={token} />} />
+                <Route path="/edit/:id" element={<Edit token={token} />} />
               </Routes>
             </div>
           </div>
