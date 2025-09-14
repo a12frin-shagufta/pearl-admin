@@ -106,59 +106,88 @@ const Add = ({ token }) => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
+  e.preventDefault();
+  setIsLoading(true);
 
+  try {
     const formData = new FormData();
-    // Append basic fields
+
+    // Basic fields (exclude arrays & files)
+    const skipKeys = ["colors", "images", "details", "faqs"];
     Object.entries(form).forEach(([key, value]) => {
-      if (key !== "colors" && key !== "images" && key !== "details") {
-        formData.append(key, value);
+      if (!skipKeys.includes(key)) {
+        // Convert booleans/numbers to string
+        formData.append(key, value === undefined || value === null ? "" : String(value));
       }
     });
 
-    // Append details (bullet points as JSON)
-// Append details
-formData.append("details", JSON.stringify(form.details));
+    // Arrays / JSON fields
+    formData.append("details", JSON.stringify(form.details || []));
+    formData.append("faqs", JSON.stringify(form.faqs || []));
+    formData.append("colors", JSON.stringify(form.colors || []));
 
-// Append FAQs ✅
-formData.append("faqs", JSON.stringify(form.faqs));
-
-// Append colors + images
-formData.append("colors", JSON.stringify(form.colors));
-for (const color of form.colors) {
-  if (form.images[color]) {
-    formData.append("images", form.images[color]);
-  }
-}
-
-    try {
-      await axios.post(`${backendUrl}/api/product/add`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      toast.success("Product added successfully!");
-      setForm({
-        name: "",
-        price: "",
-        category: "",
-        subcategory: "",
-        stock: "",
-        bestseller: false,
-        description: "",
-        details: [],
-        colors: [],
-        images: {},
-      });
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      toast.error(error.response?.data?.message || "Failed to add product");
-    } finally {
-      setIsLoading(false);
+    // Append images as images[] + imageColors[] so backend can map them
+    // (This is a common expected format; adjust keys if your backend uses different names)
+    for (const color of form.colors || []) {
+      const file = form.images[color];
+      if (file) {
+        formData.append("images[]", file);
+        formData.append("imageColors[]", color);
+      }
     }
-  };
+
+    // DEBUG: show keys being sent (do NOT keep in prod)
+    for (const pair of formData.entries()) {
+      console.log("FormData entry:", pair[0], pair[1]);
+    }
+
+    // IMPORTANT: Do NOT set Content-Type manually. Let axios/browser set multipart boundary.
+    const res = await axios.post(`${backendUrl}/api/product/add`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        // "Content-Type": "multipart/form-data", // <- remove this
+      },
+    });
+
+    console.log("Add product success:", res.status, res.data);
+    toast.success(res.data?.message || "Product added successfully!");
+
+    // Reset form (include faqs)
+    setForm({
+      name: "",
+      price: "",
+      category: "",
+      subcategory: "",
+      stock: "",
+      bestseller: false,
+      description: "",
+      details: [],
+      colors: [],
+      images: {},
+      faqs: [],
+    });
+  } catch (error) {
+    // Log everything useful
+    console.error("Error submitting form - full error:", error);
+    if (error.response) {
+      console.error("Error response status:", error.response.status);
+      console.error("Error response data:", error.response.data);
+      // show server-provided message if any
+      const serverMsg =
+        error.response.data?.message ||
+        error.response.data?.error ||
+        (typeof error.response.data === "string" ? error.response.data : null);
+      toast.error(serverMsg || `Failed to add product (status ${error.response.status})`);
+    } else {
+      toast.error(error.message || "Failed to add product");
+    }
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+
+
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-lg">
