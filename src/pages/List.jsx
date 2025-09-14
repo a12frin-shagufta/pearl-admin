@@ -26,27 +26,28 @@ const List = ({ token }) => {
   };
 
   const deleteProduct = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this product?"))
-      return;
-    try {
-      const res = await axios.post(
-        `${backendUrl}/api/product/remove`,
-        { id },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      if (res.data.success) {
-        toast.success("Product removed");
-        fetchProducts();
+  if (!window.confirm("Are you sure you want to delete this product?")) return;
+  try {
+    const res = await axios.post(
+      `${backendUrl}/api/product/remove`,
+      { id },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to delete");
+    );
+    if (res.data.success) {
+      toast.success(res.data.message || "Product removed successfully");
+      fetchProducts();
+    } else {
+      toast.error(res.data.message || "Failed to delete product");
     }
-  };
+  } catch (err) {
+    console.error("Error deleting product:", err.response?.data || err.message);
+    toast.error(err.response?.data?.message || "Failed to delete product");
+  }
+};
 
   useEffect(() => {
     fetchProducts();
