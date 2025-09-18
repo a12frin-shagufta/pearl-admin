@@ -135,67 +135,77 @@ const Testimonials = ({ token }) => {
   };
 
   return (
-    <div>
-      <h2 className="text-2xl font-semibold mb-4">Happy Customers</h2>
+    <div className="p-4">
+      <h2 className="text-xl md:text-2xl font-semibold mb-4">Happy Customers</h2>
 
       {/* Form */}
-      <form onSubmit={submit} className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white p-4 rounded shadow">
-        <input name="customerName" value={form.customerName} onChange={onChange} placeholder="Customer Name*" className="border p-2 rounded" required />
-        <input name="headline" value={form.headline} onChange={onChange} placeholder="Headline" className="border p-2 rounded" />
-        <textarea name="content" value={form.content} onChange={onChange} placeholder="Content*" className="border p-2 rounded md:col-span-2" rows={3} required />
-        <input name="rating" type="number" min="1" max="5" value={form.rating} onChange={onChange} placeholder="Rating (1-5)" className="border p-2 rounded" />
-        <input name="productName" value={form.productName} onChange={onChange} placeholder="Product Name (display)" className="border p-2 rounded" />
-        <input name="productId" value={form.productId} onChange={onChange} placeholder="ProductId (optional)" className="border p-2 rounded" />
-        <input name="location" value={form.location} onChange={onChange} placeholder="Location" className="border p-2 rounded" />
-        <input name="language" value={form.language} onChange={onChange} placeholder="Language e.g. en" className="border p-2 rounded" />
-        <label className="flex items-center gap-2"><input type="checkbox" name="featured" checked={form.featured} onChange={onChange} /> Featured</label>
-        <input name="sortOrder" type="number" value={form.sortOrder} onChange={onChange} placeholder="Sort Order" className="border p-2 rounded" />
-        <label className="flex items-center gap-2"><input type="checkbox" name="published" checked={form.published} onChange={onChange} /> Published</label>
-
-        <div className="md:col-span-2 grid md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Avatar</label>
-            <input type="file" accept="image/*" onChange={(e) => setAvatar(e.target.files[0])} />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Media (up to 6)</label>
-            <input type="file" accept="image/*,video/*" multiple onChange={(e) => setMedia(e.target.files)} />
-          </div>
+      <form onSubmit={submit} className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 bg-white p-3 md:p-4 rounded shadow">
+        <input name="customerName" value={form.customerName} onChange={onChange} placeholder="Customer Name*" className="border p-2 rounded text-sm md:text-base" required />
+        <textarea name="content" value={form.content} onChange={onChange} placeholder="Content*" className="border p-2 rounded md:col-span-2 text-sm md:text-base" rows={3} required />
+        <input name="rating" type="number" min="1" max="5" value={form.rating} onChange={onChange} placeholder="Rating (1-5)" className="border p-2 rounded text-sm md:text-base" />
+        <input name="productName" value={form.productName} onChange={onChange} placeholder="Product Name (display)" className="border p-2 rounded text-sm md:text-base" />
+        <input name="productId" value={form.productId} onChange={onChange} placeholder="ProductId (optional)" className="border p-2 rounded text-sm md:text-base" />
+        <input name="location" value={form.location} onChange={onChange} placeholder="Location" className="border p-2 rounded text-sm md:text-base" />
+        <input name="language" value={form.language} onChange={onChange} placeholder="Language e.g. en" className="border p-2 rounded text-sm md:text-base" />
+        
+        <div className="flex flex-col md:flex-row md:items-center gap-2 md:col-span-2">
+          <label className="flex items-center gap-2 text-sm md:text-base">
+            <input type="checkbox" name="featured" checked={form.featured} onChange={onChange} className="h-4 w-4" /> 
+            Featured
+          </label>
+          <input name="sortOrder" type="number" value={form.sortOrder} onChange={onChange} placeholder="Sort Order" className="border p-2 rounded text-sm md:text-base flex-1" />
+          <label className="flex items-center gap-2 text-sm md:text-base">
+            <input type="checkbox" name="published" checked={form.published} onChange={onChange} className="h-4 w-4" /> 
+            Published
+          </label>
         </div>
 
-        <div className="md:col-span-2 flex gap-2">
-          <button type="submit" disabled={loading} className={`px-4 py-2 rounded text-white ${loading ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"}`}>
+        <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-1">Avatar</label>
+            <input type="file" accept="image/*" onChange={(e) => setAvatar(e.target.files[0])} className="text-xs md:text-sm" />
+          </div>
+          {/* <div>
+            <label className="block text-sm font-medium mb-1">Media (up to 6)</label>
+            <input type="file" accept="image/*,video/*" multiple onChange={(e) => setMedia(e.target.files)} />
+          </div> */}
+        </div>
+
+        <div className="md:col-span-2 flex flex-wrap gap-2">
+          <button type="submit" disabled={loading} className={`px-3 py-2 md:px-4 md:py-2 rounded text-white text-sm md:text-base ${loading ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"}`}>
             {editingId ? "Update" : "Create"}
           </button>
           {editingId && (
-            <button type="button" onClick={reset} className="px-4 py-2 rounded bg-gray-200">Cancel</button>
+            <button type="button" onClick={reset} className="px-3 py-2 md:px-4 md:py-2 rounded bg-gray-200 text-sm md:text-base">Cancel</button>
           )}
-          <button type="button" onClick={handleReorder} className="px-4 py-2 rounded bg-blue-600 text-white">Auto Reorder</button>
+          <button type="button" onClick={handleReorder} className="px-3 py-2 md:px-4 md:py-2 rounded bg-blue-600 text-white text-sm md:text-base">Auto Reorder</button>
         </div>
       </form>
 
       {/* List */}
       <div className="mt-6 space-y-3">
         {items.map((it) => (
-          <div key={it._id} className="bg-white p-4 rounded shadow flex flex-col md:flex-row md:items-center gap-3">
-            <div className="w-14 h-14 rounded-full overflow-hidden bg-gray-100 shrink-0">
+          <div key={it._id} className="bg-white p-3 md:p-4 rounded shadow flex flex-col md:flex-row md:items-start gap-3">
+            <div className="w-12 h-12 md:w-14 md:h-14 rounded-full overflow-hidden bg-gray-100 shrink-0">
               {it.avatarUrl ? <img src={it.avatarUrl} alt={it.customerName} className="w-full h-full object-cover" /> : null}
             </div>
-            <div className="flex-1">
-              <div className="font-semibold">{it.customerName} {it.rating ? `· ⭐ ${it.rating}` : ""}</div>
-              <div className="text-sm text-gray-600">{it.headline}</div>
-              <div className="text-sm mt-1 line-clamp-2">{it.content}</div>
-              <div className="text-xs text-gray-500 mt-1">Featured: {it.featured ? "Yes" : "No"} · Order: {it.sortOrder} · {it.published ? "Published" : "Draft"}</div>
+            <div className="flex-1 min-w-0">
+              <div className="font-semibold text-sm md:text-base">{it.customerName} {it.rating ? `· ⭐ ${it.rating}` : ""}</div>
+              {it.headline && <div className="text-xs md:text-sm text-gray-600 mt-1">{it.headline}</div>}
+              <div className="text-xs md:text-sm mt-1 line-clamp-2">{it.content}</div>
+              <div className="text-xs text-gray-500 mt-2">
+                Featured: {it.featured ? "Yes" : "No"} · Order: {it.sortOrder} · {it.published ? "Published" : "Draft"}
+              </div>
             </div>
-            <div className="flex gap-2">
-              <button onClick={() => edit(it)} className="px-3 py-1 rounded bg-amber-500 text-white">Edit</button>
-              <button onClick={() => toggle(it._id, { published: !it.published })} className="px-3 py-1 rounded bg-indigo-600 text-white">
-                {it.published ? "Unpublish" : "Publish"}
+            <div className="flex flex-wrap gap-1 md:gap-2 justify-end">
+              <button onClick={() => edit(it)} className="px-2 py-1 md:px-3 md:py-1 rounded bg-amber-500 text-white text-xs md:text-sm">Edit</button>
+              <button onClick={() => toggle(it._id, { published: !it.published })} className="px-2 py-1 md:px-3 md:py-1 rounded bg-indigo-600 text-white text-xs md:text-sm">
+                {it.published ? "Unpub" : "Pub"}
               </button>
-              <button onClick={() => toggle(it._id, { featured: !it.featured })} className="px-3 py-1 rounded bg-blue-600 text-white">
-                {it.featured ? "Unfeature" : "Feature"}
+              <button onClick={() => toggle(it._id, { featured: !it.featured })} className="px-2 py-1 md:px-3 md:py-1 rounded bg-blue-600 text-white text-xs md:text-sm">
+                {it.featured ? "Unfeat" : "Feat"}
               </button>
-              <button onClick={() => remove(it._id)} className="px-3 py-1 rounded bg-red-600 text-white">Delete</button>
+              <button onClick={() => remove(it._id)} className="px-2 py-1 md:px-3 md:py-1 rounded bg-red-600 text-white text-xs md:text-sm">Delete</button>
             </div>
           </div>
         ))}

@@ -137,18 +137,18 @@ const Edit = ({ token }) => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-lg">
-      <h2 className="text-2xl font-bold mb-6">Edit Product</h2>
-      <form onSubmit={handleSubmit} className="space-y-6">
+    <div className="max-w-4xl mx-auto p-4 md:p-6 bg-white rounded-xl shadow-lg">
+      <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">Edit Product</h2>
+      <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
         {/* Name & Price */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           <div>
             <label className="block text-sm font-medium">Product Name*</label>
             <input
               name="name"
               value={form.name}
               onChange={handleInputChange}
-              className="w-full p-3 border rounded-lg"
+              className="w-full p-2 md:p-3 border rounded-lg"
               required
             />
           </div>
@@ -160,21 +160,21 @@ const Edit = ({ token }) => {
               type="number"
               value={form.price}
               onChange={handleInputChange}
-              className="w-full p-3 border rounded-lg"
+              className="w-full p-2 md:p-3 border rounded-lg"
               required
             />
           </div>
         </div>
 
         {/* Category & Subcategory */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           <div>
             <label className="block text-sm font-medium">Category*</label>
             <select
               name="category"
               value={form.category}
               onChange={handleInputChange}
-              className="w-full p-3 border rounded-lg"
+              className="w-full p-2 md:p-3 border rounded-lg"
               required
             >
               <option value="">Select Category</option>
@@ -192,7 +192,7 @@ const Edit = ({ token }) => {
               name="subcategory"
               value={form.subcategory}
               onChange={handleInputChange}
-              className="w-full p-3 border rounded-lg"
+              className="w-full p-2 md:p-3 border rounded-lg"
               disabled={!form.category}
             >
               <option value="">Select Subcategory</option>
@@ -208,7 +208,7 @@ const Edit = ({ token }) => {
         </div>
 
         {/* Stock + Bestseller */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           <div>
             <label className="block text-sm font-medium">Stock*</label>
             <input
@@ -216,18 +216,18 @@ const Edit = ({ token }) => {
               type="number"
               value={form.stock}
               onChange={handleInputChange}
-              className="w-full p-3 border rounded-lg"
+              className="w-full p-2 md:p-3 border rounded-lg"
               required
             />
           </div>
 
-          <div className="flex items-center mt-6">
+          <div className="flex items-center mt-4 md:mt-6">
             <input
               type="checkbox"
               name="bestseller"
               checked={form.bestseller}
               onChange={handleInputChange}
-              className="h-5 w-5"
+              className="h-4 w-4 md:h-5 md:w-5"
             />
             <label className="ml-2 text-sm">Mark as Bestseller</label>
           </div>
@@ -241,7 +241,7 @@ const Edit = ({ token }) => {
             value={form.description}
             onChange={handleInputChange}
             rows={3}
-            className="w-full p-3 border rounded-lg"
+            className="w-full p-2 md:p-3 border rounded-lg"
             required
           />
         </div>
@@ -249,31 +249,31 @@ const Edit = ({ token }) => {
         {/* Details (bullet points) */}
         <div>
           <label className="block text-sm font-medium mb-2">Product Details</label>
-          <div className="flex gap-2 mb-3">
+          <div className="flex flex-col sm:flex-row gap-2 mb-3">
             <input
               type="text"
               value={detailInput}
               onChange={(e) => setDetailInput(e.target.value)}
               placeholder="Enter detail"
-              className="flex-1 p-3 border rounded-lg"
+              className="flex-1 p-2 md:p-3 border rounded-lg"
             />
             <button
               type="button"
               onClick={handleAddDetail}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg"
+              className="bg-blue-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg whitespace-nowrap"
             >
               Add
             </button>
           </div>
 
-          <ul className="list-disc list-inside space-y-1">
+          <ul className="list-disc list-inside space-y-1 pl-2">
             {form.details?.map((detail, idx) => (
-              <li key={idx} className="flex justify-between items-center">
-                <span>{detail}</span>
+              <li key={idx} className="flex justify-between items-center py-1">
+                <span className="break-words flex-1 mr-2">{detail}</span>
                 <button
                   type="button"
                   onClick={() => handleRemoveDetail(detail)}
-                  className="text-red-500 text-sm"
+                  className="text-red-500 text-sm whitespace-nowrap"
                 >
                   Remove
                 </button>
@@ -293,7 +293,7 @@ const Edit = ({ token }) => {
               onChange={(e) =>
                 setFaqInput({ ...faqInput, question: e.target.value })
               }
-              className="p-2 border rounded"
+              className="p-2 md:p-3 border rounded"
             />
             <input
               type="text"
@@ -302,12 +302,12 @@ const Edit = ({ token }) => {
               onChange={(e) =>
                 setFaqInput({ ...faqInput, answer: e.target.value })
               }
-              className="p-2 border rounded"
+              className="p-2 md:p-3 border rounded"
             />
             <button
               type="button"
               onClick={handleAddFaq}
-              className="bg-blue-600 text-white px-4 py-2 rounded"
+              className="bg-blue-600 text-white px-3 py-2 md:px-4 md:py-2 rounded"
             >
               Add FAQ
             </button>
@@ -317,16 +317,16 @@ const Edit = ({ token }) => {
             {form.faqs.map((faq, idx) => (
               <li
                 key={idx}
-                className="border p-2 rounded flex justify-between items-start"
+                className="border p-2 md:p-3 rounded flex flex-col sm:flex-row justify-between items-start gap-2"
               >
-                <div>
-                  <p className="font-semibold">{faq.question}</p>
-                  <p className="text-sm text-gray-600">{faq.answer}</p>
+                <div className="flex-1">
+                  <p className="font-semibold break-words">{faq.question}</p>
+                  <p className="text-sm text-gray-600 break-words">{faq.answer}</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => handleRemoveFaq(idx)}
-                  className="text-red-500 text-sm"
+                  className="text-red-500 text-sm whitespace-nowrap"
                 >
                   Remove
                 </button>
@@ -338,7 +338,7 @@ const Edit = ({ token }) => {
         {/* Save button */}
         <button
           type="submit"
-          className="w-full py-3 px-6 rounded-lg bg-green-600 hover:bg-green-700 text-white font-medium"
+          className="w-full py-2 md:py-3 px-4 md:px-6 rounded-lg bg-green-600 hover:bg-green-700 text-white font-medium"
         >
           Save Changes
         </button>
