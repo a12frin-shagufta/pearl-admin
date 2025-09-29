@@ -15,6 +15,8 @@ const Edit = ({ token }) => {
 
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [editingDetailIdx, setEditingDetailIdx] = useState(null);
+const [editingDetailValue, setEditingDetailValue] = useState("");
 
   // product-level fields
   const [form, setForm] = useState({
@@ -130,7 +132,26 @@ const Edit = ({ token }) => {
     fetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
+const beginEditDetail = (idx) => {
+  setEditingDetailIdx(idx);
+  setEditingDetailValue(form.details[idx] ?? "");
+};
 
+const saveDetailEdit = () => {
+  const v = (editingDetailValue || "").trim();
+  if (!v) return toast.error("Detail cannot be empty");
+  setForm((prev) => ({
+    ...prev,
+    details: prev.details.map((d, i) => (i === editingDetailIdx ? v : d)),
+  }));
+  setEditingDetailIdx(null);
+  setEditingDetailValue("");
+};
+
+const cancelDetailEdit = () => {
+  setEditingDetailIdx(null);
+  setEditingDetailValue("");
+};
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
@@ -413,13 +434,53 @@ const commitVariantColor = (index) => {
             <button type="button" onClick={handleAddDetail} className="px-3 bg-blue-600 text-white rounded">Add</button>
           </div>
           <ul className="space-y-2">
-            {form.details.map((d, idx) => (
-              <li key={idx} className="flex justify-between items-center bg-gray-50 p-2 rounded">
-                <span>{d}</span>
-                <button type="button" onClick={() => handleRemoveDetail(d)} className="text-red-500 text-sm">Remove</button>
-              </li>
-            ))}
-          </ul>
+  {form.details.map((d, idx) => {
+    const isEditing = editingDetailIdx === idx;
+    return (
+      <li key={idx} className="flex justify-between items-center bg-gray-50 p-2 rounded">
+        <div className="flex-1 mr-3">
+          {isEditing ? (
+            <input
+              autoFocus
+              className="w-full p-2 border rounded"
+              value={editingDetailValue}
+              onChange={(e) => setEditingDetailValue(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") saveDetailEdit();
+                if (e.key === "Escape") cancelDetailEdit();
+              }}
+            />
+          ) : (
+            <span>{d}</span>
+          )}
+        </div>
+
+        <div className="flex gap-2">
+          {isEditing ? (
+            <>
+              <button type="button" onClick={saveDetailEdit} className="px-3 py-1 bg-green-600 text-white rounded">
+                Save
+              </button>
+              <button type="button" onClick={cancelDetailEdit} className="px-3 py-1 bg-gray-300 rounded">
+                Cancel
+              </button>
+            </>
+          ) : (
+            <>
+              <button type="button" onClick={() => beginEditDetail(idx)} className="text-blue-600 text-sm">
+                Edit
+              </button>
+              <button type="button" onClick={() => handleRemoveDetail(d)} className="text-red-500 text-sm">
+                Remove
+              </button>
+            </>
+          )}
+        </div>
+      </li>
+    );
+  })}
+</ul>
+
         </div>
 
         {/* FAQs */}

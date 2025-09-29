@@ -35,6 +35,8 @@ const Add = ({ token }) => {
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [colorEdits, setColorEdits] = useState({});
+  const [editingDetailIdx, setEditingDetailIdx] = useState(null);
+const [editingDetailValue, setEditingDetailValue] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -47,6 +49,28 @@ const Add = ({ token }) => {
       }
     })();
   }, []);
+
+
+  const beginEditDetail = (idx) => {
+  setEditingDetailIdx(idx);
+  setEditingDetailValue(form.details[idx] ?? "");
+};
+
+const saveDetailEdit = () => {
+  const v = editingDetailValue.trim();
+  if (!v) return toast.error("Detail cannot be empty");
+  setForm((prev) => ({
+    ...prev,
+    details: prev.details.map((d, i) => (i === editingDetailIdx ? v : d)),
+  }));
+  setEditingDetailIdx(null);
+  setEditingDetailValue("");
+};
+
+const cancelDetailEdit = () => {
+  setEditingDetailIdx(null);
+  setEditingDetailValue("");
+};
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -358,14 +382,72 @@ if (missingMedia.length > 0) {
             <input type="text" value={detailInput} onChange={(e) => setDetailInput(e.target.value)} placeholder="Add bullet point" className="flex-1 p-3 border rounded-lg" />
             <button type="button" onClick={handleAddDetail} className="bg-blue-600 text-white px-4 py-2 rounded-lg">Add</button>
           </div>
-          <ul className="space-y-2">
-            {form.details.map((d, i) => (
-              <li key={i} className="flex justify-between items-center bg-gray-50 p-3 rounded-lg">
-                <span>{d}</span>
-                <button type="button" onClick={() => handleRemoveDetail(d)} className="text-red-500 text-sm">Remove</button>
-              </li>
-            ))}
-          </ul>
+         <ul className="space-y-2">
+  {form.details.map((d, idx) => {
+    const isEditing = editingDetailIdx === idx;
+    return (
+      <li key={idx} className="flex justify-between items-center bg-gray-50 p-3 rounded-lg">
+        {/* left side: text or editor */}
+        <div className="flex-1 mr-3">
+          {isEditing ? (
+            <input
+              autoFocus
+              className="w-full p-2 border rounded"
+              value={editingDetailValue}
+              onChange={(e) => setEditingDetailValue(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") saveDetailEdit();
+                if (e.key === "Escape") cancelDetailEdit();
+              }}
+            />
+          ) : (
+            <span>{d}</span>
+          )}
+        </div>
+
+        {/* right side: actions */}
+        <div className="flex gap-2">
+          {isEditing ? (
+            <>
+              <button
+                type="button"
+                onClick={saveDetailEdit}
+                className="px-3 py-1 bg-green-600 text-white rounded"
+              >
+                Save
+              </button>
+              <button
+                type="button"
+                onClick={cancelDetailEdit}
+                className="px-3 py-1 bg-gray-300 rounded"
+              >
+                Cancel
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={() => beginEditDetail(idx)}
+                className="text-blue-600 text-sm"
+              >
+                Edit
+              </button>
+              <button
+                type="button"
+                onClick={() => handleRemoveDetail(d)}
+                className="text-red-500 text-sm"
+              >
+                Remove
+              </button>
+            </>
+          )}
+        </div>
+      </li>
+    );
+  })}
+</ul>
+
         </div>
 
         {/* Color variants (images + optional video + per-variant stock) */}
