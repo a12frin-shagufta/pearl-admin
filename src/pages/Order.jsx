@@ -114,12 +114,25 @@ const Order = ({ token }) => {
               <div className="mt-4">
                 <p className="font-medium text-sm md:text-base">Items</p>
                 <ul className="list-disc pl-4 md:pl-6 mt-1 space-y-1">
-                  {(o.items || []).map((it, idx) => (
-                    <li key={idx} className="text-sm">
-                      {it.name} × {it.quantity} = {currency} {it.total}
-                    </li>
-                  ))}
-                </ul>
+ {(o.items || []).map((it, idx) => {
+  const colorText =
+    it.variantColor || it.variant || (it.key?.split("_")[1] || "");
+  return (
+    <li key={idx} className="text-sm flex items-center gap-2">
+      <span>{it.name} × {it.quantity} = {currency} {it.total}</span>
+      {colorText && (
+        <span className="ml-2 inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-gray-100">
+          <span className="inline-block w-3 h-3 rounded-full border"
+                style={{ background: colorText }} />
+          <span>Color: {colorText}</span>
+        </span>
+      )}
+    </li>
+  );
+})}
+
+</ul>
+
               </div>
 
               {/* Order Summary */}
