@@ -37,6 +37,9 @@ const Add = ({ token }) => {
   const [colorEdits, setColorEdits] = useState({});
   const [editingDetailIdx, setEditingDetailIdx] = useState(null);
 const [editingDetailValue, setEditingDetailValue] = useState("");
+const [editingFaqIdx, setEditingFaqIdx] = useState(null);
+const [editingFaq, setEditingFaq] = useState({ question: "", answer: "" });
+
 
   useEffect(() => {
     (async () => {
@@ -49,6 +52,29 @@ const [editingDetailValue, setEditingDetailValue] = useState("");
       }
     })();
   }, []);
+
+  const beginEditFaq = (idx) => {
+  setEditingFaqIdx(idx);
+  setEditingFaq({ ...form.faqs[idx] });
+};
+
+const saveFaqEdit = () => {
+  if (!editingFaq.question.trim() || !editingFaq.answer.trim()) {
+    toast.error("Both question and answer required");
+    return;
+  }
+  setForm((prev) => ({
+    ...prev,
+    faqs: prev.faqs.map((fq, i) => (i === editingFaqIdx ? editingFaq : fq)),
+  }));
+  setEditingFaqIdx(null);
+  setEditingFaq({ question: "", answer: "" });
+};
+
+const cancelFaqEdit = () => {
+  setEditingFaqIdx(null);
+  setEditingFaq({ question: "", answer: "" });
+};
 
 
   const beginEditDetail = (idx) => {
@@ -548,16 +574,51 @@ if (missingMedia.length > 0) {
           <button type="button" onClick={handleAddFaq} className="bg-blue-600 text-white px-4 py-2 rounded-lg mb-4">Add FAQ</button>
 
           <ul className="space-y-3">
-            {form.faqs.map((fq, idx) => (
-              <li key={idx} className="border p-3 rounded-lg flex justify-between items-start">
-                <div>
-                  <p className="font-semibold">{fq.question}</p>
-                  <p className="text-sm text-gray-600 mt-1">{fq.answer}</p>
-                </div>
-                <button type="button" onClick={() => handleRemoveFaq(idx)} className="text-red-500 text-sm">Remove</button>
-              </li>
-            ))}
-          </ul>
+  {form.faqs.map((fq, idx) => {
+    const isEditing = editingFaqIdx === idx;
+    return (
+      <li key={idx} className="border p-3 rounded-lg flex justify-between items-start">
+        <div className="flex-1">
+          {isEditing ? (
+            <>
+              <input
+                className="w-full mb-2 p-2 border rounded"
+                value={editingFaq.question}
+                onChange={(e) => setEditingFaq((prev) => ({ ...prev, question: e.target.value }))}
+                placeholder="Edit question"
+              />
+              <input
+                className="w-full mb-2 p-2 border rounded"
+                value={editingFaq.answer}
+                onChange={(e) => setEditingFaq((prev) => ({ ...prev, answer: e.target.value }))}
+                placeholder="Edit answer"
+              />
+            </>
+          ) : (
+            <>
+              <p className="font-semibold">{fq.question}</p>
+              <p className="text-sm text-gray-600 mt-1">{fq.answer}</p>
+            </>
+          )}
+        </div>
+        <div className="flex flex-col gap-2 ml-3">
+          {isEditing ? (
+            <>
+              <button onClick={saveFaqEdit} className="text-green-600 text-sm">Save</button>
+              <button onClick={cancelFaqEdit} className="text-gray-500 text-sm">Cancel</button>
+            </>
+          ) : (
+            <>
+              <button onClick={() => beginEditFaq(idx)} className="text-blue-600 text-sm">Edit</button>
+              <button onClick={() => handleRemoveFaq(idx)} className="text-red-500 text-sm">Remove</button>
+            </>
+          )}
+        </div>
+      </li>
+    );
+  })}
+</ul>
+
         </div>
 
         {/* Submit */}

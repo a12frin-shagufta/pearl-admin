@@ -114,17 +114,59 @@ const ManageCategories = ({ token }) => {
         <ul className="space-y-3">
           {categories.map((cat) => (
             <li key={cat._id} className="border p-3 rounded">
-              <strong className="text-lg">{cat.name}</strong>
-              {cat.subcategories.length > 0 && (
-                <ul className="mt-2 ml-2 sm:ml-4 space-y-1">
-                  {cat.subcategories.map((sub, idx) => (
-                    <li key={idx} className="text-gray-600 bg-gray-50 p-2 rounded">
-                      {sub}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </li>
+  <div className="flex items-center justify-between">
+    <strong className="text-lg">{cat.name}</strong>
+    <button
+      onClick={async () => {
+        if (window.confirm(`Delete category "${cat.name}"?`)) {
+          try {
+            await axios.delete(`${backendUrl}/api/category/${cat._id}`, {
+              headers: { Authorization: `Bearer ${token}` },
+            });
+            toast.success("Category deleted");
+            fetchCategories();
+          } catch (err) {
+            toast.error(err.response?.data?.message || "Failed to delete category");
+          }
+        }
+      }}
+      className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-sm"
+    >
+      Delete
+    </button>
+  </div>
+
+  {cat.subcategories.length > 0 && (
+    <ul className="mt-2 ml-2 sm:ml-4 space-y-1">
+      {cat.subcategories.map((sub, idx) => (
+        <li key={idx} className="flex items-center justify-between bg-gray-50 p-2 rounded">
+          <span className="text-gray-600">{sub}</span>
+          <button
+            onClick={async () => {
+              if (window.confirm(`Delete subcategory "${sub}"?`)) {
+                try {
+                  await axios.post(
+                    `${backendUrl}/api/category/delete-subcategory`,
+                    { categoryId: cat._id, subcategory: sub },
+                    { headers: { Authorization: `Bearer ${token}` } }
+                  );
+                  toast.success("Subcategory deleted");
+                  fetchCategories();
+                } catch (err) {
+                  toast.error(err.response?.data?.message || "Failed to delete subcategory");
+                }
+              }
+            }}
+            className="bg-red-500 text-white px-2 py-0.5 rounded text-xs hover:bg-red-600"
+          >
+            Delete
+          </button>
+        </li>
+      ))}
+    </ul>
+  )}
+</li>
+
           ))}
         </ul>
       </div>
