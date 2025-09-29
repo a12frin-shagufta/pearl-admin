@@ -28,6 +28,7 @@ const Edit = ({ token }) => {
     size: "",
     details: [],
     faqs: [],
+    difficulty: "easy", // ⚡ new
   });
 
   // list of categories from server (for select)
@@ -102,6 +103,7 @@ const Edit = ({ token }) => {
           size: product.size || "",
           details: detailsArr,
           faqs: faqsArr,
+           difficulty: product.difficulty || "easy", // ⚡ add
         }));
 
         // Normalize variants into our UI shape
@@ -255,6 +257,8 @@ const Edit = ({ token }) => {
       fd.append("stock", String(form.stock ?? 0));
       fd.append("bestseller", String(!!form.bestseller));
       fd.append("description", String(form.description || ""));
+      fd.append("difficulty", String(form.difficulty || "easy"));
+
       if (form.size !== undefined) fd.append("size", String(form.size));
 
       // arrays as JSON strings (controller parseMaybeJsonArray will accept JSON or array)
@@ -332,6 +336,22 @@ const Edit = ({ token }) => {
               {categories.map((c) => <option key={c._id} value={c.name}>{c.name}</option>)}
             </select>
           </div>
+
+          <div>
+  <label className="block text-sm font-medium">Difficulty*</label>
+  <select
+    name="difficulty"
+    value={form.difficulty}
+    onChange={handleInputChange}
+    className="w-full p-2 border rounded"
+    required
+  >
+    <option value="easy">Easy</option>
+    <option value="medium">Medium</option>
+    <option value="difficult">Difficult</option>
+  </select>
+</div>
+
 
           <div>
             <label className="block text-sm font-medium">Subcategory</label>

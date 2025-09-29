@@ -23,7 +23,9 @@ const Add = ({ token }) => {
     images: {}, // { colorName: File }
     faqs: [],
     size: "",
-    variantStocks: {}, // <-- per-variant stock { color: number }
+    variantStocks: {},
+     difficulty: "easy"
+     // <-- per-variant stock { color: number }
   });
 
   const [videoFiles, setVideoFiles] = useState({});
@@ -151,12 +153,13 @@ const Add = ({ token }) => {
         setIsLoading(false);
         return;
       }
-      const missingImages = form.colors.filter((c) => !form.images[c]);
-      if (missingImages.length > 0) {
-        toast.error(`Please upload images for colors: ${missingImages.join(", ")}`);
-        setIsLoading(false);
-        return;
-      }
+     const missingMedia = form.colors.filter((c) => !form.images[c] && !videoFiles[c]);
+if (missingMedia.length > 0) {
+  toast.error(`Please upload an image or a video for: ${missingMedia.join(", ")}`);
+  setIsLoading(false);
+  return;
+}
+
 
       const formData = new FormData();
       Object.entries({
@@ -177,6 +180,8 @@ const Add = ({ token }) => {
         "variantStocks",
         JSON.stringify(form.colors.map((c) => form.variantStocks?.[c] || 0))
       );
+      formData.append("difficulty", form.difficulty || "easy");
+
 
       form.colors.forEach((color, i) => {
         const imageFile = form.images[color];
@@ -258,6 +263,22 @@ const Add = ({ token }) => {
             <input name="stock" type="number" min="0" value={form.stock} onChange={handleInputChange} className="w-full p-3 border rounded-lg" required />
             <div className="text-xs text-gray-500 mt-1">This is the default global stock for variants unless you set per-variant stock below.</div>
           </div>
+
+          <div>
+  <label className="block text-sm font-medium mb-1">Difficulty*</label>
+  <select
+    name="difficulty"
+    value={form.difficulty}
+    onChange={handleInputChange}
+    className="w-full p-3 border rounded-lg"
+    required
+  >
+    <option value="easy">Easy</option>
+    <option value="medium">Medium</option>
+    <option value="difficult">Difficult</option>
+  </select>
+</div>
+
 
           <div>
             <label className="block text-sm font-medium mb-1">Size</label>
