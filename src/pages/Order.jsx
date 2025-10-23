@@ -8,6 +8,14 @@ const Order = ({ token }) => {
   const [orders, setOrders] = useState([]);
   const [loadingActionId, setLoadingActionId] = useState(null);
 
+  const apiOrigin = backendUrl.replace(/\/api\/?$/, "");
+
+
+const isImg = (s = "") => /\.(png|jpe?g|webp|gif|bmp|avif)$/i.test(s);
+
+// normalize absolute vs relative proof URLs
+const toUrl = (u) => (u?.startsWith("http") ? u : `${apiOrigin}${u || ""}`);
+
   const fetchOrders = async () => {
     try {
       const res = await axios.get(`${backendUrl}/api/order/all`, {
@@ -25,30 +33,45 @@ const Order = ({ token }) => {
     fetchOrders();
   }, [token]);
 
-  const handleAction = async (orderId, action) => {
-    try {
-      let reason = "";
-      if (action === "reject") {
-        reason = window.prompt("Optional reason for rejection (this will be sent to the customer):", "") || "";
-        // if you'd like to force a reason, uncomment below
-        // if (!reason) return toast.info("Rejection reason required");
-      }
-
-      setLoadingActionId(orderId);
-      await axios.post(
-        `${backendUrl}/api/order/admin/confirm-payment`,
-        { orderId, action, reason },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      toast.success("Order updated");
-      await fetchOrders();
-    } catch (err) {
-      console.error(err);
-      toast.error("Update failed");
-    } finally {
-      setLoadingActionId(null);
+const handleAction = async (orderId, action) => {
+  try {
+    let reason = "";
+    if (action === "reject") {
+      reason = window.prompt(
+        "Optional reason for rejection (this will be sent to the customer):",
+        ""
+      ) || "";
     }
-  };
+
+    const cleanId = String(orderId).trim();       // ⬅️ sanitize here
+    const cleanAction = String(action).trim();
+
+  
+
+    setLoadingActionId(cleanId);
+
+
+
+
+
+     
+    await axios.post(
+      `${backendUrl}/api/order/admin/confirm-payment`,
+      { orderId: cleanId, action: cleanAction, reason },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    toast.success("Order updated");
+    await fetchOrders();
+  } catch (err) {
+    console.error(err);
+    // show server message if available
+    const msg = err?.response?.data?.message || "Update failed";
+    toast.error(msg);
+  } finally {
+    setLoadingActionId(null);
+  }
+};
 
   if (!token) return <p className="p-4">Please login as admin to view orders.</p>;
 
@@ -173,26 +196,55 @@ const Order = ({ token }) => {
               </div>
 
               {/* Payment Proofs */}
-              <div className="mt-4">
-                <p className="font-medium text-sm md:text-base">Proofs</p>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {o.paymentProofs && o.paymentProofs.length > 0 ? (
-                    o.paymentProofs.map((pf) => (
-                      <a
-                        key={pf.filename || pf.url}
-                        href={`${backendUrl}${pf.url}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-blue-600 underline text-sm"
-                      >
-                        View proof
-                      </a>
-                    ))
-                  ) : (
-                    <p className="text-sm text-gray-500">No proof uploaded</p>
-                  )}
-                </div>
-              </div>
+             {/* Payment Proofs */}
+{/* Payment Proofs */}
+<div className="mt-4">
+  <p className="font-medium text-sm md:text-base">Proofs</p>
+
+  <div className="flex flex-col gap-2 mt-2">
+    {o.paymentProofs?.length ? (
+      o.paymentProofs.map((pf, i) => {
+        const name = pf.filename || pf.url || `proof-${i}`;
+        const url  = toUrl(pf.url);
+
+        return (
+          <div key={`${name}-${i}`} className="border rounded p-2">
+            {/* Thumbnail (if image); falls back to nothing if not image */}
+            {isImg(name) && (
+              <img
+                src={url}
+                alt="payment proof"
+                className="h-28 w-40 object-contain mb-2"
+                loading="lazy"
+                onError={(e) => {
+                  // keep the URL link visible even if image fails
+                  e.currentTarget.style.display = "none";
+                }}
+              />
+            )}
+
+            {/* Always show the URL as a link so you can verify it */}
+            <a
+              href={url}
+              target="_blank"
+              rel="noreferrer"
+              className="text-blue-600 underline text-sm break-all"
+              title={name}
+            >
+              {url}
+            </a>
+
+            {/* Small filename note */}
+            <div className="text-[10px] text-gray-500 mt-1 truncate">{name}</div>
+          </div>
+        );
+      })
+    ) : (
+      <p className="text-sm text-gray-500">No proof uploaded</p>
+    )}
+  </div>
+</div>
+
 
               {/* Action Buttons */}
               <div className="mt-4 flex flex-wrap gap-2">
