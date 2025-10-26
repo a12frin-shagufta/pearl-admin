@@ -157,29 +157,51 @@ const handleRequestProof = async (orderId) => {
               </div>
 
               {/* Order Items */}
-              <div className="mt-4">
-                <p className="font-medium text-sm md:text-base">Items</p>
-                <ul className="list-disc pl-4 md:pl-6 mt-1 space-y-1">
- {(o.items || []).map((it, idx) => {
-  const colorText =
-    it.variantColor || it.variant || (it.key?.split("_")[1] || "");
-  return (
-    <li key={idx} className="text-sm flex items-center gap-2">
-      <span>{it.name} × {it.quantity} = {currency} {it.total}</span>
-      {colorText && (
-        <span className="ml-2 inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-gray-100">
-          <span className="inline-block w-3 h-3 rounded-full border"
-                style={{ background: colorText }} />
-          <span>Color: {colorText}</span>
-        </span>
-      )}
-    </li>
-  );
-})}
+              {/* Order Items */}
+<div className="mt-4">
+  <p className="font-medium text-sm md:text-base">Items</p>
+  <ul className="list-disc pl-4 md:pl-6 mt-1 space-y-1">
+    {(o.items || []).map((it, idx) => {
+      const colorText =
+        it.variantColor || it.variant || (it.key?.split("_")[1] || "");
+      const fullName = `${(it.engravingFirstName || "").trim()} ${(it.engravingLastName || "").trim()}`.trim();
 
-</ul>
+      return (
+        <li key={idx} className="text-sm flex flex-wrap items-center gap-2">
+          <span>
+            {it.name} × {it.quantity} = {currency} {it.total}
+          </span>
 
-              </div>
+          {/* Color chip (existing) */}
+          {colorText && (
+            <span className="ml-2 inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-gray-100">
+              <span
+                className="inline-block w-3 h-3 rounded-full border"
+                style={{ background: colorText }}
+              />
+              <span>Color: {colorText}</span>
+            </span>
+          )}
+
+          {/* NEW: Engraved Name chip */}
+          {fullName && (
+            <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-900">
+              <svg
+                viewBox="0 0 24 24"
+                className="w-3.5 h-3.5"
+                fill="currentColor"
+              >
+                <path d="M12 2C6.48 2 2 5.58 2 10c0 2.38 1.28 4.51 3.29 6l-1.02 3.67a1 1 0 0 0 1.3 1.22L9 19.9c.95.22 1.96.34 3 .34 5.52 0 10-3.58 10-8s-4.48-8-10-8Zm-3 9h6a1 1 0 1 1 0 2H9a1 1 0 1 1 0-2Z" />
+              </svg>
+              <span>Name: {fullName}</span>
+            </span>
+          )}
+        </li>
+      );
+    })}
+  </ul>
+</div>
+
 
               {/* Order Summary */}
               <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
