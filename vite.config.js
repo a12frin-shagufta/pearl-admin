@@ -7,5 +7,15 @@ export default defineConfig({
   plugins: [react(),
       tailwindcss()
   ],
-   server: {port: 5175}
+    optimizeDeps: {
+    exclude: ['@ffmpeg/ffmpeg', '@ffmpeg/util']
+    },
+       server: {
+        port: 5175,
+        headers: {
+            "Cross-Origin-Opener-Policy": "same-origin",
+            "Cross-Origin-Embedder-Policy": "require-corp",
+        }
+    }
+
 })
