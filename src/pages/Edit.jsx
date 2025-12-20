@@ -4,7 +4,6 @@ import axios from "axios";
 import { backendUrl } from "../App"; // adjust if you export this; otherwise replace with env var
 import { toast } from "react-toastify";
 import { useParams, useNavigate } from "react-router-dom";
-import { compressVideo } from "../utils/compressVideo";
 
 /**
  * Edit product component
